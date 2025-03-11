@@ -75,7 +75,8 @@ function StyleSelector() {
 
 function Login() {
   return (
-    <>
+    <div className="flex-col gap-2">
+      <h2 className="m-2 text-2xl text-bold">Sign In</h2>
       <div className="m-2">
         <input
           type="text"
@@ -93,11 +94,48 @@ function Login() {
       <div className="m-2">
         <button className="btn btn-primary">Login</button>
       </div>
-    </>
+    </div>
   );
 }
 
-function Register() {}
+function Register() {
+  return (
+    <div className="flex-col gap-2">
+      <h2 className="m-2 text-2xl text-bold">Register</h2>
+      <div className="m-2">
+        <input
+          type="text"
+          className="input input-primary input-bordered"
+          placeholder="Username"
+        />
+      </div>
+      <div className="m-2">
+        <input
+          type="email"
+          className="input input-primary input-bordered"
+          placeholder="email"
+        />
+      </div>
+      <div className="m-2">
+        <input
+          type="password"
+          className="input input-primary input-bordered"
+          placeholder="Password"
+        />
+      </div>
+      <div className="m-2">
+        <input
+          type="verifyPassword"
+          className="input input-primary input-bordered"
+          placeholder="Verify Password"
+        />
+      </div>
+      <div className="m-2">
+        <button className="btn btn-primary">Register</button>
+      </div>
+    </div>
+  );
+}
 
 function SignInModal() {
   const modalRef = useRef<HTMLDialogElement>(null);
@@ -111,11 +149,17 @@ function SignInModal() {
         Sign In
       </button>
       <dialog ref={modalRef} className="modal">
-        <div className="modal-box">
-          {loginOrRegister ? <Login /> : <>hi</>}
-          <button className="bg-red-500 h-10 w-10" onClick={() => setLoginOrRegister(!loginOrRegister)} />  
+        <div className="modal-box w-96">
+          {loginOrRegister ? <Login /> : <Register />}
+          <div className="flex justify-center">
+            <button
+              className=" bg-secondary/30 border rounded px-2 m-2 hover:cursor-pointer hover:bg-secondary/50"
+              onClick={() => setLoginOrRegister(!loginOrRegister)}
+            >
+              {loginOrRegister ? "Need an account?" : "already have an account?"}
+            </button>
+          </div>
         </div>
-        
       </dialog>
     </>
   );
