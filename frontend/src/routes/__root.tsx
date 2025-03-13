@@ -1,7 +1,7 @@
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { checkUser } from "../queries/queries";
+import { checkUser, createUser, loginUser } from "../queries/userQueries";
 import { useRef, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { userLoginSchema, userRegisterSchema } from "../schemas/userSchemas";
@@ -78,25 +78,35 @@ function StyleSelector() {
 function Login() {
   const form = useForm({
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
     validators: {
       onChange: userLoginSchema,
     },
+    onSubmit: async (data) => {
+      loginUser(data.value);
+    },
   });
 
-  //TODO: make post request to the server and handle the response
+  //TODO: handle the token
   return (
-    <form className="flex-col gap-2">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+      className="flex-col gap-2"
+    >
       <h2 className="m-2 underline text-2xl text-bold">Sign In</h2>
       <div className="m-2">
         <form.Field
-          name="username"
+          name="email"
           children={(field) => (
             <>
               <div className="my-1">
-                <label className="label">Username</label>
+                <label className="label">Email</label>
                 {field.state.meta.errors?.[0]?.message ? (
                   <em className="validator-hint m-2 text-xs text-error">
                     {field.state.meta.errors[0].message}
@@ -106,9 +116,8 @@ function Login() {
               <input
                 required
                 value={field.state.value}
-                placeholder="Username"
-                minLength={4}
-                pattern="^[a-zA-Z0-9]+$"
+                placeholder="Email"
+                type="email"
                 onChange={(e) => field.handleChange(e.target.value)}
                 className="input input-bordered validator input-primary"
               />
@@ -170,9 +179,19 @@ function Register() {
     validators: {
       onChange: userRegisterSchema,
     },
+    onSubmit: async (data) => {
+      createUser(data.value);
+    },
   });
   return (
-    <div className="flex-col gap-2">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+      className="flex-col gap-2"
+    >
       <h2 className="m-2 underline text-2xl text-bold">Register</h2>
       <div className="m-2">
         <form.Field
@@ -291,7 +310,7 @@ function Register() {
           </button>
         )}
       />
-    </div>
+    </form>
   );
 }
 

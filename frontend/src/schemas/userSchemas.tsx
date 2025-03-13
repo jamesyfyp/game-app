@@ -24,12 +24,15 @@ const password = z
 
 const email = z.string().email("Invalid email address");
 
-//Combined for form validation
+//user login stuff
 export const userLoginSchema = z.object({
-  username: userName,
+  email: email,
   password: password,
 });
 
+export type UserLogin = z.infer<typeof userLoginSchema>;
+
+//user registration stuff
 export const userRegisterSchema = z
   .object({
     username: userName,
@@ -41,3 +44,5 @@ export const userRegisterSchema = z
     message: "Passwords do not match",
     path: ["verifyPassword"], // Attach error to the verifyPassword field this is fucking cool
   });
+
+export type UserRegistration = z.infer<typeof userRegisterSchema>;
