@@ -10,10 +10,13 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@tanstack/react-form": "^1.0.5",
     "@tanstack/react-query": "^5.67.2",
     "@tanstack/react-router": "^1.112.18",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^1",
