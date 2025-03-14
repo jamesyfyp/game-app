@@ -5,6 +5,7 @@ import { checkUser, createUser, loginUser } from "../queries/userQueries";
 import { useRef, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { userLoginSchema, userRegisterSchema } from "../schemas/userSchemas";
+import { useAuth } from "../contexts/auth";
 
 function StyleSelector() {
   return (
@@ -76,6 +77,7 @@ function StyleSelector() {
 }
 
 function Login() {
+  const { setToken, setUser } = useAuth();
   const form = useForm({
     defaultValues: {
       email: "",
@@ -85,11 +87,13 @@ function Login() {
       onChange: userLoginSchema,
     },
     onSubmit: async (data) => {
-      loginUser(data.value);
+      const response = await loginUser(data.value);
+      setToken(response.token);
+      setUser({ name: response.name, pid: response.pid },
+      );
     },
   });
 
-  //TODO: handle the token
   return (
     <form
       onSubmit={(e) => {
@@ -152,7 +156,6 @@ function Login() {
         />
       </div>
       <form.Subscribe
-        //TODO: login post request, handle passing the token somewhere safe (do research)
         selector={(state) => [state.canSubmit, state.isSubmitting]}
         children={([canSubmit, isSubmitting]) => (
           <button
@@ -359,13 +362,24 @@ function SignInModal() {
   );
 }
 
+function SignOutButton() {
+  const { setToken, setUser } = useAuth();
+  return (
+    <button
+      className="btn p-2 m-1"
+      onClick={() => {
+        setToken(null);
+        setUser(null);
+      }}
+    >
+      Sign Out
+    </button>
+  );
+}
+
 export const Route = createRootRoute({
   component: () => {
-    const queryClient = useQueryClient();
-    const { isPending, data } = useQuery({
-      queryKey: ["user"],
-      queryFn: checkUser,
-    });
+    const { token } = useAuth();
     // TODO: refactor the checkUser function to not return null when returning the expected unauthorized response
     // look up the react-query docs for best practices
     return (
@@ -382,7 +396,7 @@ export const Route = createRootRoute({
             </Link>
           </div>
           <div className="flex-grow" />
-          {isPending ? <></> : data == null ? <SignInModal /> : null}
+          { !token ? <SignInModal /> : <SignOutButton /> }
           <StyleSelector />
         </div>
         <hr />

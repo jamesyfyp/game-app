@@ -2,9 +2,10 @@ import { headers } from "./utils";
 import { UserLogin, UserRegistration } from "../schemas/userSchemas";
 
 export async function checkUser() {
+  const token = localStorage.getItem("jwt_token");
   const response = await fetch("api/auth/current", { 
-    credentials: "include", 
-    headers 
+    method: "GET",
+    headers: { ...headers, Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
     if (response.status === 401) {
@@ -12,7 +13,8 @@ export async function checkUser() {
     }
     throw new Error("Network response was not ok");
   } else {
-    return response.json();
+    const user = await response.json();
+    return user;
   }
 }
 
@@ -53,4 +55,6 @@ export async function loginUser(data: UserLogin) {
     const errorData = await response.json();
     throw new Error(errorData.message || "Registration failed");
   }
+
+  return response.json();
 }
